@@ -1,0 +1,7 @@
+{"name":"vzgcoders/discordphp-mcp","description":"Scoped Discord bot tools for MCP clients using DiscordPHP HTTP","type":"project","license":"MIT","require":{"php":"^8.3","mcp/sdk":"^0.4","discord-php/http":"^10.0","react/async":"^4.0","react/promise-timer":"^1.11","psr/log":"^3.0"},"require-dev":{"phpunit/phpunit":"^11.0","friendsofphp/php-cs-fixer":"^3.64"},"autoload":{"psr-4":{"DiscordMcp\\":"src/"}},"autoload-dev":{"psr-4":{"Tests\\":"tests/"}},"scripts":{"unit":"phpunit","cs-check":"php-cs-fixer fix --dry-run --diff"},
+    "config": {
+        "platform": {
+            "php": "8.3.0"
+        }
+    }
+}
