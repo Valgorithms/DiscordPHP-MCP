@@ -7,7 +7,7 @@ OpenAI API key, or DiscordPHP core change is required.
 
 ## Install locally
 
-Requires PHP 8.3+ with mbstring, Composer and a Discord bot application.
+Requires PHP 8.3+ with mbstring and fileinfo, Composer and a Discord bot application.
 Run `composer install`, copy `config.example.json` to ignored `config.local.json`,
 and replace the guild/channel IDs. Empty channel lists grant no message access.
 Store the raw bot token in a private file outside Git with permissions restricted

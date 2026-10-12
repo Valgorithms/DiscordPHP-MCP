@@ -42,6 +42,12 @@ foreach ([false, true] as $writable) {
             || !str_contains(json_encode($called), 'Offline fixture')) {
             throw new RuntimeException('Offline MCP tool invocation failed.');
         }
+        $denied = $request(['jsonrpc' => '2.0', 'id' => 4, 'method' => 'tools/call', 'params' => [
+            'name' => 'discord_getMessage', 'arguments' => ['channelId' => '999', 'messageId' => '333'],
+        ]]);
+        if (($denied['result']['isError'] ?? false) !== true || !str_contains(json_encode($denied), 'outside the configured')) {
+            throw new RuntimeException('Scope denial was not reported as an MCP tool error.');
+        }
     } finally {
         fclose($pipes[0]);
         fclose($pipes[1]);
