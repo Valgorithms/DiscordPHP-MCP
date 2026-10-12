@@ -1,0 +1,6 @@
+/vendor/
+/config.local.json
+/.env
+/*.token
+/.phpunit.cache/
+/.php-cs-fixer.cache
