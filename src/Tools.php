@@ -184,7 +184,7 @@ final class Tools
     private function request(string $method, Endpoint $endpoint, ?array $payload = null): array
     {
         try {
-            return await(timeout($this->transport->request($method, $endpoint, $payload), $this->timeout));
+            return PromiseAwaiter::wait(timeout($this->transport->request($method, $endpoint, $payload), $this->timeout));
         } catch (TimeoutException) {
             throw new ToolCallException($method === 'get' ? 'Discord read timed out; coverage is unknown.'
                 : 'Discord write timed out; delivery is UNKNOWN. Inspect channel history before retrying; never assume failure.');

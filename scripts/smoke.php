@@ -3,16 +3,17 @@
 declare(strict_types=1);
 
 // Real SDK stdio process, entirely synthetic Discord transport; never loads bot credentials.
-foreach ([false, true] as $writable) {
+$live = in_array('--live-read', $argv, true);
+foreach ($live ? [false] : [false, true] as $writable) {
     $process = proc_open(
-        [PHP_BINARY, __DIR__.'/../tests/fixture-server.php', $writable ? 'writable' : 'readonly'],
+        $live ? [PHP_BINARY, __DIR__.'/../server.php'] : [PHP_BINARY, __DIR__.'/../tests/fixture-server.php', $writable ? 'writable' : 'readonly'],
         [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
         $pipes
     );
     if (!is_resource($process)) {
         throw new RuntimeException('Fixture process could not start.');
     }
-    stream_set_timeout($pipes[1], 10);
+    stream_set_timeout($pipes[1], $live ? 180 : 10);
     $request = static function (array $message) use ($pipes): array {
         fwrite($pipes[0], json_encode($message, JSON_THROW_ON_ERROR)."\n");
         fflush($pipes[0]);
@@ -39,7 +40,7 @@ foreach ([false, true] as $writable) {
             'name' => 'discord_listGuilds', 'arguments' => (object) [],
         ]]);
         if (isset($called['error']) || ($called['result']['isError'] ?? false)
-            || !str_contains(json_encode($called), 'Offline fixture')) {
+            || (!$live && !str_contains(json_encode($called), 'Offline fixture'))) {
             throw new RuntimeException('Offline MCP tool invocation failed.');
         }
         $denied = $request(['jsonrpc' => '2.0', 'id' => 4, 'method' => 'tools/call', 'params' => [
@@ -56,4 +57,4 @@ foreach ([false, true] as $writable) {
         proc_close($process);
     }
 }
-echo "Offline MCP initialize/list/call and read/write registration passed.\n";
+echo $live ? "Live read-only MCP initialize/list/guild-call and scope denial passed.\n" : "Offline MCP initialize/list/call and read/write registration passed.\n";

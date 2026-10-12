@@ -98,3 +98,5 @@ over stdio with an offline fixture process. `composer cs-check` checks formattin
 CI covers PHP 8.3-8.5 on Linux and Windows. Offline success proves protocol and
 adapter behavior; it does not prove Discord permissions, real bot access, host
 integration, delivery, or cloud reachability. No live messages are sent by tests.
+
+For an explicitly authorized live read-only check, run `php scripts/smoke.php --live-read`. It checks bot startup, MCP discovery, guild reads and scope denial without reading message bodies or publishing. Offline fixtures use delayed promises to cover SDK/ReactPHP scheduling.
