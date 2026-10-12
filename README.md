@@ -21,6 +21,8 @@ with `token_env_file` (absolute path) and `token_env_key` (for example `TOKEN`)
 in your private JSON. Only that literal assignment is read; other settings are
 not imported and variable expansion is unsupported. Keep this file private.
 
+After explicitly authorizing whole guilds for reading, run `php scripts/configure-guilds.php GUILD_ID ...` to snapshot their current non-category channels into the private allowlist. This performs live read requests, replaces the read scope and disables writes. New channels and threads are not automatically added. Grant individual channels by editing the private JSON instead.
+
 Give the bot View Channel and Read Message History for approved channels.
 Message Content privileged intent/access can affect REST message content: enable
 and obtain approval where Discord requires it. Empty text does not prove a quiet
