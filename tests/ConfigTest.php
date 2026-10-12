@@ -30,6 +30,26 @@ final class ConfigTest extends TestCase
         }
     }
 
+    public function testExistingDotenvReadsOnlySelectedLiteralCredential(): void
+    {
+        $configFile = tempnam(sys_get_temp_dir(), 'mcp-config-');
+        $envFile = tempnam(sys_get_temp_dir(), 'mcp-env-');
+        $previous = getenv('DISCORD_MCP_BOT_TOKEN');
+        putenv('DISCORD_MCP_BOT_TOKEN');
+        try {
+            file_put_contents($envFile, "OTHER=ignored\nexport TOKEN='synthetic-only'\n");
+            file_put_contents($configFile, json_encode(['token_env_file' => $envFile, 'token_env_key' => 'TOKEN', 'channels' => ['111' => []]]));
+            [$config, $token] = Config::load($configFile);
+            self::assertSame('synthetic-only', $token);
+            self::assertNull($config->guildFor('222'));
+            self::assertSame([], $config->writeChannels);
+        } finally {
+            unlink($configFile);
+            unlink($envFile);
+            putenv($previous === false ? 'DISCORD_MCP_BOT_TOKEN' : 'DISCORD_MCP_BOT_TOKEN='.$previous);
+        }
+    }
+
     public function testMissingConfigurationHasNoPathOrCredentialDetails(): void
     {
         try {

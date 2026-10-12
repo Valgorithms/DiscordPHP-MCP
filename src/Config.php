@@ -45,6 +45,25 @@ final class Config
         if (!$token && is_string($data['token_file'] ?? null) && is_file($data['token_file']) && filesize($data['token_file']) < 4096) {
             $token = trim((string) file_get_contents($data['token_file']));
         }
+        if (!$token && is_string($data['token_env_file'] ?? null)) {
+            $key = $data['token_env_key'] ?? 'TOKEN';
+            $file = $data['token_env_file'];
+            if (!is_string($key) || !preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/D', $key)
+                || !is_file($file) || filesize($file) > 65536) {
+                throw new \RuntimeException('Invalid private token environment source.');
+            }
+            // Read only a literal assignment. Never expand or execute dotenv content.
+            foreach (file($file, FILE_IGNORE_NEW_LINES) as $line) {
+                if (preg_match('/^\\s*(?:export\\s+)?'.preg_quote($key, '/').'\\s*=\\s*(.*?)\\s*$/D', $line, $match)) {
+                    $token = $match[1];
+                    if (strlen($token) >= 2 && (($token[0] === '"' && substr($token, -1) === '"')
+                        || ($token[0] === "'" && substr($token, -1) === "'"))) {
+                        $token = substr($token, 1, -1);
+                    }
+                    break;
+                }
+            }
+        }
         if (!is_string($token) || trim($token) === '' || preg_match('/\s/', $token)) {
             throw new \RuntimeException('A bot token must be provided through the environment or token file.');
         }

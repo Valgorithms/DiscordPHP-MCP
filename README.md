@@ -16,6 +16,11 @@ to your account; point `token_file` to its absolute path. Alternatively provide
 Codex TOML, CLI arguments, chat, PRs, or plugin archives. `env.example` is a
 configuration contract, not an automatically loaded dotenv file.
 
+To reuse an authorized bot's existing dotenv credential, replace `token_file`
+with `token_env_file` (absolute path) and `token_env_key` (for example `TOKEN`)
+in your private JSON. Only that literal assignment is read; other settings are
+not imported and variable expansion is unsupported. Keep this file private.
+
 Give the bot View Channel and Read Message History for approved channels.
 Message Content privileged intent/access can affect REST message content: enable
 and obtain approval where Discord requires it. Empty text does not prove a quiet
